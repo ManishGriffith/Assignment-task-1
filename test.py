@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 # Specify the full path to your CSV file
-csv_file_path = 'C:/Users/manis/PycharmProjects/example/Crash Statistics Victoria.csv'
+csv_file_path = '/Users/manishsaily/Desktop/UNI/Assignment-1/Assignment-task-1/Crash Statistics Victoria.csv'
 
 data = pd.read_csv(csv_file_path)
 
@@ -12,7 +12,7 @@ data['ACCIDENT_DATE'] = pd.to_datetime(data['ACCIDENT_DATE'], format=date_format
 st.title("Crash Statistics Data Filtering")
 
 # Create a dropdown to select the year
-selected_year = st.selectbox("Select a Year", list(range(2015, 2020)))
+selected_year = st.selectbox("Select a Year", list(range(2013, 2019)))
 
 # Filter rows for the selected year
 filtered_data = data[data['ACCIDENT_DATE'].dt.year == selected_year].copy()
@@ -25,7 +25,8 @@ selected_columns = []
 
 if st.button(f"Show Data for {selected_year}"):
     selected_columns = ['OBJECTID', 'ACCIDENT_NO', 'ACCIDENT_STATUS', 'ACCIDENT_DATE', 'ACCIDENT_TIME', 'SEVERITY']
-    st.dataframe(selected_year[selected_columns])
+    st.dataframe(filtered_data[selected_columns])
+
 
 # Create a separate button to display data based on the entered accident type
 if st.button(f"Show Data for Accident type in {selected_year}"):
