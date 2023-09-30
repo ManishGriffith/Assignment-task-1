@@ -1,10 +1,14 @@
 import pandas as pd
 import streamlit as st
 
-# Specify the full path to your CSV file
-csv_file_path = '/Users/manishsaily/Desktop/UNI/Assignment-1/Assignment-task-1/Crash Statistics Victoria.csv'
+#user uploads cvs file
+st.title('Accident Analysis App')
+# Upload CSV file
+csv_file = st.file_uploader('Upload a CSV file containing accident data', type=['csv'])
+if csv_file is not None:
+    st.write('CSV file uploaded successfully!')
 
-data = pd.read_csv(csv_file_path)
+data = pd.read_csv(csv_file)
 
 date_format = '%d/%m/%Y'
 data['ACCIDENT_DATE'] = pd.to_datetime(data['ACCIDENT_DATE'], format=date_format)
@@ -66,10 +70,20 @@ if st.button("speed zones"):
     ax.set_title('Accidents per Speed Zone')
     ax.set_xticks(accident_counts.index)
     ax.set_xticklabels(accident_counts.index, rotation=45)
-
-
+    #return accident_counts, fig
     # Streamlit app
+    # Analyze the data and generate the bar graph
+    accident_counts, fig = analyze_accidents(csv_file)
 
+    # Display the accident counts in a table
+    st.write('Accident Counts per Speed Zone:')
+    st.write(accident_counts)
+
+     # Display the bar graph in the Streamlit app
+    st.pyplot(fig)
+
+#if __name__ == '__main__':
+#    main()
 
 
 
