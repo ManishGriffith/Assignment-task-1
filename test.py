@@ -50,3 +50,30 @@ if st.button("Accidents per hour"):
     chart_data = pd.DataFrame({'Hour': hourly_counts.index, 'Accidents': hourly_counts.values})
     st.line_chart(chart_data.set_index('Hour'))
     st.write("Hourly Accident Counts")
+
+#make a button for speed zones
+if st.button("speed zones"):
+    # Group the data by speed zone and count the number of accidents in each zone
+    accident_counts = data['SPEED_ZONE'].value_counts()
+
+    # Create a bar graph to visualize the accident counts per speed zone
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(accident_counts.index, accident_counts.values)
+
+    # Customize the plot
+    ax.set_xlabel('SPEED_ZONE')
+    ax.set_ylabel('Number of Accidents')
+    ax.set_title('Accidents per Speed Zone')
+    ax.set_xticks(accident_counts.index)
+    ax.set_xticklabels(accident_counts.index, rotation=45)
+
+
+    # Streamlit app
+
+
+
+
+
+
+
+
