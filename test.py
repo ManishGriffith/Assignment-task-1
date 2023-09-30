@@ -74,10 +74,15 @@ def analyze_accidents(csv_file):
 if st.button("SPEED_ZONE"):
     # Analyze the data and display the result
     accident_counts = analyze_accidents(csv_file)
-
-     # Display the total accidents per speed zone in a table
+    # Display the total accidents per speed zone in a table
     st.write('Total Accidents per Speed Zone:')
     st.write(accident_counts)
+    plt.figure(figsize=(10, 6))
+    plt.bar(accident_counts['SPEED_ZONE'], accident_counts['Total Accidents'])
+    plt.xlabel('Speed Zone')
+    plt.ylabel('Total Accidents')
+    plt.title('Total Accidents per Speed Zone')
+    st.pyplot()
 
 
    # if __name__ == '__main__':
