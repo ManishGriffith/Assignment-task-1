@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
 
 #user uploads cvs file
 st.title('Accident Analysis App')
@@ -55,35 +56,32 @@ if st.button("Accidents per hour"):
     st.line_chart(chart_data.set_index('Hour'))
     st.write("Hourly Accident Counts")
 
+
+
+
 #make a button for speed zones
-if st.button("speed zones"):
+
+    # Function to analyze the CSV data and display total accidents per speed zone
+def analyze_accidents(csv_file):
     # Group the data by speed zone and count the number of accidents in each zone
-    accident_counts = data['SPEED_ZONE'].value_counts()
+    accident_counts = data['SPEED_ZONE'].value_counts().reset_index()
+    accident_counts.columns = ['SPEED_ZONE', 'Total Accidents']
+    return accident_counts
 
-    # Create a bar graph to visualize the accident counts per speed zone
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.bar(accident_counts.index, accident_counts.values)
 
-    # Customize the plot
-    ax.set_xlabel('SPEED_ZONE')
-    ax.set_ylabel('Number of Accidents')
-    ax.set_title('Accidents per Speed Zone')
-    ax.set_xticks(accident_counts.index)
-    ax.set_xticklabels(accident_counts.index, rotation=45)
-    #return accident_counts, fig
     # Streamlit app
-    # Analyze the data and generate the bar graph
-    accident_counts, fig = analyze_accidents(csv_file)
+            # Create a button to trigger the analysis
+if st.button("SPEED_ZONE"):
+    # Analyze the data and display the result
+    accident_counts = analyze_accidents(csv_file)
 
-    # Display the accident counts in a table
-    st.write('Accident Counts per Speed Zone:')
+     # Display the total accidents per speed zone in a table
+    st.write('Total Accidents per Speed Zone:')
     st.write(accident_counts)
 
-     # Display the bar graph in the Streamlit app
-    st.pyplot(fig)
 
-#if __name__ == '__main__':
-#    main()
+   # if __name__ == '__main__':
+    #    main()
 
 
 
