@@ -45,22 +45,28 @@ if csv_file is not None:
     if st.button("Accidents per hour"):
         time_format = '%H.%M.%S'
         filtered_data['ACCIDENT_TIME'] = pd.to_datetime(filtered_data['ACCIDENT_TIME'], format=time_format)
-
-        # Extract the hour from the "ACCIDENT_TIME" column using .loc
         filtered_data['hour'] = filtered_data['ACCIDENT_TIME'].dt.hour
 
         # Group the data by hour and count the number of accidents for each hour
         hourly_counts = filtered_data.groupby('hour')['ACCIDENT_TIME'].count()
 
-        # Create a line chart for accidents per hour and label the chart
+        # Create a bar chart for accidents per hour and label the chart
         chart_data = pd.DataFrame({'Hour': hourly_counts.index, 'Accidents': hourly_counts.values})
-        st.line_chart(chart_data.set_index('Hour'))
+
+        fig, ax = plt.subplots()
+        ax.bar(chart_data['Hour'], chart_data['Accidents'])
+        ax.set_xlabel('Hour')
+        ax.set_ylabel('Accidents')
+        ax.set_title('Hourly Accident Counts (24h)')
+        ax.set_xticks(range(24))
+        
+        st.pyplot(fig)
         st.write("Hourly Accident Counts")
 
     # make a button for speed zones
     # Create a button to trigger the analysis
     if st.button("Show data per Speed Zone"):
-         # Analyze the data and display the result
+        # Analyze the data and display the result
         accident_counts = data['SPEED_ZONE'].value_counts().reset_index()
         accident_counts.columns = ['SPEED_ZONE', 'Total Accidents']
         # Display the total accidents per speed zone in a table
@@ -73,4 +79,3 @@ if csv_file is not None:
         plt.title('Total Accidents per Speed Zone')
         plt.xticks(rotation=40, ha="right")
         st.pyplot(fig)
-
