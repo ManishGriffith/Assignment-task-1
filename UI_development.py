@@ -2,38 +2,45 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-
 st.title('Accident Analysis App')
 
 csv_file = st.file_uploader('Upload a CSV file containing accident data', type=['csv'])
-if csv_file is not None:
-    st.write('CSV file uploaded successfully!')
 
-    data = pd.read_csv(csv_file)
 
-    date_format = '%d/%m/%Y'
-    data['ACCIDENT_DATE'] = pd.to_datetime(data['ACCIDENT_DATE'], format=date_format)
+def read_csv(csv):
+    if csv is not None:
+        st.write('CSV file uploaded successfully!')
 
-    st.title("Crash Statistics Data Filtering")
+        data = pd.read_csv(csv)
 
-    # create a dropdown to select the year
-    selected_year = st.selectbox("Select a Year", list(range(2013, 2019)))
+        date_format = '%d/%m/%Y'
+        data['ACCIDENT_DATE'] = pd.to_datetime(data['ACCIDENT_DATE'], format=date_format)
 
-    # filter rows for the selected year
-    filtered_data = data[data['ACCIDENT_DATE'].dt.year == selected_year].copy()
+        st.title("Crash Statistics Data Filtering")
 
-    # create a text input for the user to enter an accident type
-    accident_type = st.text_input("Accident Type:")
+        # create a dropdown to select the year and accident type input
+        selected_year = st.selectbox("Select a Year", list(range(2013, 2019)))
+        filtered_data = data[data['ACCIDENT_DATE'].dt.year == selected_year].copy()
+        accident_type = st.text_input("Accident Type:")
 
-    # empty list of columns to display the output
-    selected_columns = []
+        if st.button(f"Show Data for {selected_year}"):
+            selected_columns = ['OBJECTID', 'ACCIDENT_NO', 'ACCIDENT_STATUS',
+                                'ACCIDENT_DATE', 'ACCIDENT_TIME', 'SEVERITY']
+            st.dataframe(filtered_data[selected_columns])
 
-    if st.button(f"Show Data for {selected_year}"):
-        selected_columns = ['OBJECTID', 'ACCIDENT_NO', 'ACCIDENT_STATUS',
-                            'ACCIDENT_DATE', 'ACCIDENT_TIME', 'SEVERITY']
-        st.dataframe(filtered_data[selected_columns])
+        # create a separate button to display accident type
+        display_data_for_accident_type(filtered_data, selected_year, accident_type)
+        # create a button to display accidents per hour
+        display_accidents_per_hour(filtered_data, selected_year)
+        # create a button for alcohol impacts
+        display_alcohol_impacts(filtered_data, selected_year)
+        # make a button for speed zones
+        display_speed_zones(data, selected_year)
+    else:
+        'Please upload a csv file'
 
-    # create a separate button to display data based on the entered accident type
+
+def display_data_for_accident_type(filtered_data, selected_year, accident_type):
     if st.button(f"Show Data for Accident type in {selected_year}"):
         if not accident_type:
             st.warning("Please enter an accident type.")
@@ -44,7 +51,8 @@ if csv_file is not None:
                                 'ACCIDENT_DATE', 'ACCIDENT_TIME', 'SEVERITY']
             st.dataframe(filtered_data_type[selected_columns])
 
-    # create a button to calculate and display accidents per hour
+
+def display_accidents_per_hour(filtered_data, selected_year):
     if st.button("Accidents per hour"):
         time_format = '%H.%M.%S'
         filtered_data['ACCIDENT_TIME'] = pd.to_datetime(filtered_data['ACCIDENT_TIME'], format=time_format)
@@ -62,10 +70,11 @@ if csv_file is not None:
         ax.set_ylabel('Accidents')
         ax.set_title(f'Hourly Accident Counts (24h) for {selected_year}')
         ax.set_xticks(range(24))
-        
+
         st.pyplot(fig)
 
-    # create alcohol impact button
+
+def display_alcohol_impacts(filtered_data, selected_year):
     if st.button("Alcohol Impacts"):
         # filter data where ALCOHOLTIME is yes
         alcohol_impact_data = filtered_data[filtered_data['ALCOHOLTIME'] == 'Yes'].copy()
@@ -88,7 +97,8 @@ if csv_file is not None:
         plt.title(f'Alcohol Impacts in {selected_year}')
         st.pyplot(fig)
 
-    # make a button for speed zones
+
+def display_speed_zones(data, selected_year):
     if st.button(f"Show data per Speed Zone for {selected_year}"):
         # takes out all strings from SPEED_ZONE and leaves only numbers
         data['SPEED_ZONE'] = data['SPEED_ZONE'].str.extract('(\d+)')
@@ -104,3 +114,5 @@ if csv_file is not None:
         plt.ylabel('Total Accidents')
         plt.title(f'Total Accidents per Speed Zone for {selected_year}')
         st.pyplot(fig)
+
+accident_data = read_csv(csv_file)
