@@ -115,4 +115,4 @@ def display_speed_zones(data, selected_year):
         plt.title(f'Total Accidents per Speed Zone for {selected_year}')
         st.pyplot(fig)
 
-accident_data = read_csv(csv_file)
+read_csv(csv_file)
